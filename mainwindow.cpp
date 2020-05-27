@@ -177,3 +177,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    AI* a1 = new AI(n, g1);
+    int winner = -1;
+    winner = a1->makeBestMove(g1->b1->board,g1->playerTurn);
+    refreshBoardView();
+    if(winner != -1)
+    {
+        endGame(winner);
+    }
+}

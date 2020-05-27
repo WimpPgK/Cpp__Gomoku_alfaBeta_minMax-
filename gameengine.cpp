@@ -27,10 +27,10 @@ int GameEngine::makeMove(int pozycja_x, int pozycja_y)
         }
     }
 
-    return checkWinner();
+    return checkWinner(b1->board);
 }
 
-int GameEngine::checkWinner()
+int GameEngine::checkWinner(char** board)
 {
 
         int pomGracz1 = 0;

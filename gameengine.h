@@ -12,11 +12,12 @@ class GameEngine
 public:
     GameEngine(int n);
     int makeMove(int pozycja_x, int pozycja_y);
+    int checkWinner(char** board);
     int playerTurn;
 
     Board* b1;
 private:
-    int checkWinner();
+
 };
 
 #endif // GAMEENGINE_H
