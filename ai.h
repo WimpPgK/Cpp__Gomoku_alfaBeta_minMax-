@@ -13,16 +13,8 @@ class AI
 
 public:
     AI(int n, GameEngine* g1);
-    void printScoreTab(int** tab);
-    int heuristics01(char** tab, int** scoreTab);
-    int heuristics02(char** tab, int** scoreTab);
+    int makeBestMove(char** tab, int playerID, int heuristicType, int algorithmType);
 
-    int makeBestMove(char** tab,int);
-    int minMax(char** tab,int depth, bool isMaximizing);
-    int alfaBeta(char** tab,int depth, bool isMaximizing);
-    int boardEvaluationFunvtion01(char** tab);
-    int boardEvaluationFunvtion02(char** tab);
-    int boardEvaluationFunvtion03(char** tab);
 
 
 };

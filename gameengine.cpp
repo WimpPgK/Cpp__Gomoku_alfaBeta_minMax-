@@ -10,19 +10,18 @@ GameEngine::GameEngine(int n)
 }
 
 
-int GameEngine::makeMove(int pozycja_x, int pozycja_y)
+int GameEngine::makeMove(int position_x, int position_y)
 {
-    if(b1->board[pozycja_y][pozycja_x] == -1)
+    if(b1->board[position_y][position_x] == -1)
     {
-        cout << 'a' - b1->board[pozycja_y][pozycja_x] << endl;
         if(playerTurn == 1)
         {
-            b1->board[pozycja_y][pozycja_x] = 1;
+            b1->board[position_y][position_x] = 1;
             playerTurn = 2;
         }
         else
         {
-            b1->board[pozycja_y][pozycja_x] = 2;
+            b1->board[position_y][position_x] = 2;
             playerTurn = 1;
         }
     }
@@ -33,8 +32,8 @@ int GameEngine::makeMove(int pozycja_x, int pozycja_y)
 int GameEngine::checkWinner(char** board)
 {
 
-        int pomGracz1 = 0;
-        int pomGracz2 = 0;
+        int pomPlayer1 = 0;
+        int pomPlayer2 = 0;
         /*
             sprawdzanie czy jest wygrany w poziomie
         */
@@ -52,15 +51,15 @@ int GameEngine::checkWinner(char** board)
                 // sprawdzanie dla gracza 1
                 if (b1->board[i][j] == 1)
                 {
-                    pomGracz1++;
+                    pomPlayer1++;
                 }
-                if (pomGracz1 >= 5)
+                if (pomPlayer1 >= 5)
                 {
                     return 1;
                 }
                 if (b1->board[i][j] != 1)
                 {
-                    pomGracz1 = 0;
+                    pomPlayer1 = 0;
                 }
 
 
@@ -68,28 +67,28 @@ int GameEngine::checkWinner(char** board)
                 // sprawdzanie dla gracza 2
                 if (b1->board[i][j] == 2)
                 {
-                    pomGracz2++;
+                    pomPlayer2++;
 
                 }
-                if (pomGracz2 >= 5)
+                if (pomPlayer2 >= 5)
                 {
                     return 2;
                 }
                 if (b1->board[i][j] != 2)
                 {
-                    pomGracz2 = 0;
+                    pomPlayer2 = 0;
                 }
             }
-            pomGracz1 = 0;
-            pomGracz2 = 0;
+            pomPlayer1 = 0;
+            pomPlayer2 = 0;
         }
 
 
         /*
             sprawdzenie czy jest wygrany w pionie
         */
-        pomGracz1 = 0;
-        pomGracz2 = 0;
+        pomPlayer1 = 0;
+        pomPlayer2 = 0;
         for (int j = 0; j < n; j++)
         {
             for (int i = 0; i < n; i++)
@@ -97,15 +96,15 @@ int GameEngine::checkWinner(char** board)
                 // sprawdzanie dla gracza 1
                 if (b1->board[i][j] == 1)
                 {
-                    pomGracz1++;
+                    pomPlayer1++;
                 }
-                if (pomGracz1 >= 5)
+                if (pomPlayer1 >= 5)
                 {
                     return 1;
                 }
                 if (b1->board[i][j] != 1)
                 {
-                    pomGracz1 = 0;
+                    pomPlayer1 = 0;
                 }
 
 
@@ -113,34 +112,34 @@ int GameEngine::checkWinner(char** board)
                 // sprawdzanie dla gracza 2
                 if (b1->board[i][j] == 2)
                 {
-                    pomGracz2++;
+                    pomPlayer2++;
 
                 }
-                if (pomGracz2 >= 5)
+                if (pomPlayer2 >= 5)
                 {
                     return 2;
                 }
                 if (b1->board[i][j] != 2)
                 {
-                    pomGracz2 = 0;
+                    pomPlayer2 = 0;
                 }
             }
-            pomGracz1 = 0;
-            pomGracz2 = 0;
+            pomPlayer1 = 0;
+            pomPlayer2 = 0;
         }
 
         /*
             sprawdzenie, czy jest wygrany po skosie "funkcja malejaca y = -x"
         */
-        pomGracz1 = 0;
-        pomGracz2 = 0;
+        pomPlayer1 = 0;
+        pomPlayer2 = 0;
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
             {
                 // dla gracza 1
-                pomGracz1 = 0;
-                pomGracz2 = 0;
+                pomPlayer1 = 0;
+                pomPlayer2 = 0;
                 int pomX = 0;
                 int pomY = 0;
                 if (b1->board[i][j] == 1)
@@ -149,13 +148,13 @@ int GameEngine::checkWinner(char** board)
                     pomY = i;
                     while (pomY < n && pomX < n && b1->board[pomY][pomX] == 1)
                     {
-                        pomGracz1++;
+                        pomPlayer1++;
                         pomY++;
                         pomX++;
                         //cout <<"Gracz1 - pozycja "<< pomY << "  " << pomX << "  "<< pomGracz1 << endl;
                     }
                     //cout << endl << endl;
-                    if (pomGracz1 >= 5)
+                    if (pomPlayer1 >= 5)
                     {
                         return 1;
                     }
@@ -170,34 +169,34 @@ int GameEngine::checkWinner(char** board)
                     pomY = i;
                     while (pomY < n && pomX < n && b1->board[pomY][pomX] == 2 )
                     {
-                        pomGracz2++;
+                        pomPlayer2++;
                         pomY++;
                         pomX++;
 
                     }
-                    if (pomGracz2 >= 5)
+                    if (pomPlayer2 >= 5)
                     {
                         return 2;
                     }
                 }
             }
-            pomGracz1 = 0;
-            pomGracz2 = 0;
+            pomPlayer1 = 0;
+            pomPlayer2 = 0;
         }
 
 
         /*
             sprawdzenie, czy jest wygrany po skosie "funkcja rosnaca y = x"
         */
-        pomGracz1 = 0;
-        pomGracz2 = 0;
+        pomPlayer1 = 0;
+        pomPlayer2 = 0;
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
             {
                 // dla gracza 1
-                pomGracz1 = 0;
-                pomGracz2 = 0;
+                pomPlayer1 = 0;
+                pomPlayer2 = 0;
                 int pomX = 0;
                 int pomY = 0;
                 if (b1->board[i][j] == 1)
@@ -206,11 +205,11 @@ int GameEngine::checkWinner(char** board)
                     pomY = i;
                     while (pomY < n && pomX >= 0 && b1->board[pomY][pomX] == 1)
                     {
-                        pomGracz1++;
+                        pomPlayer1++;
                         pomY++;
                         pomX--;
                     }
-                    if (pomGracz1 >= 5)
+                    if (pomPlayer1 >= 5)
                     {
                         return 1;
                     }
@@ -223,51 +222,47 @@ int GameEngine::checkWinner(char** board)
                 {
                     pomX = j;
                     pomY = i;
-                    while (pomY < n && pomX >= 0 < n && b1->board[pomY][pomX] == 2)
+                    while (pomY < n && pomX >= 0 && b1->board[pomY][pomX] == 2)
                     {
-                        pomGracz2++;
+                        pomPlayer2++;
                         pomY++;
                         pomX--;
 
                     }
-                    if (pomGracz2 >= 5)
+                    if (pomPlayer2 >= 5)
                     {
                         return 2;
                     }
                 }
             }
-            pomGracz1 = 0;
-            pomGracz2 = 0;
+            pomPlayer1 = 0;
+            pomPlayer2 = 0;
         }
 
 
         /*
-
           sprawdzenie czy plansza jest pelna - czyli remis
-
         */
-        bool planszaPelna = true;
+        bool boardIsFull = true;
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
                     if (b1->board[i][j] == -1)
                     {
-                        planszaPelna = false;
+                        boardIsFull  = false;
                         break;
                     }
                 }
-                if (planszaPelna == false)
+                if (boardIsFull  == false)
                 {
                     break;
                 }
             }
 
-            if(planszaPelna == true)
+            if(boardIsFull  == true)
             {
                 return 0;
             }
-
-
         return -1;
 }

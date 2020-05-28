@@ -4,8 +4,9 @@
 #include <QPixmap>
 #include <QApplication>
 #include <QMessageBox>
-
+#include <chrono>
 #include <iostream>
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -44,25 +45,11 @@ MainWindow::MainWindow(QWidget *parent)
             tekst += " ";
             tekst += QString::number(j);
             Field[i][j]->setFlat(true);
-            connect(Field[i][j],  &QPushButton::clicked,  [=](){ mapowaniePrzyciskow(tekst); });
+            connect(Field[i][j],  &QPushButton::clicked,  [=](){ mapButtons(tekst); });
          }
     }
 
     initGame();
-
-    for(int i = 0 ; i < n ; i++)
-    {
-        for(int j = 0 ; j < n ; j++)
-        {
-            /*
-            Field[i][j]->setFlat(true);
-            Field[i][j]->setIcon(freeSlot);
-            Field[i][j]->setIconSize(QSize(iconSizeX,iconSizeY));*/
-
-        }
-    }
-
-
 }
 
 void MainWindow::initGame()
@@ -72,20 +59,20 @@ void MainWindow::initGame()
     //b1->printBoard();
 }
 
-void MainWindow::mapowaniePrzyciskow(QString text)
+void MainWindow::mapButtons(QString text)
 {
     string zakodowanaPozycja =  text.toUtf8().constData();
     string delimiter = " ";
     int pozycja_x = stoi(zakodowanaPozycja.substr(0, zakodowanaPozycja.find(delimiter)));
     int pozycja_y = stoi(zakodowanaPozycja.substr(zakodowanaPozycja.find(delimiter)));
-    obslugaKlikniecia(pozycja_x, pozycja_y);
+    clickAction(pozycja_x, pozycja_y);
 
 }
 
-void MainWindow::obslugaKlikniecia(int pozycja_x, int pozycja_y)
+void MainWindow::clickAction(int pozycja_x, int pozycja_y)
 {
     int winner = -1;
-    cout << "Ruch na pozycji wiersz " << pozycja_y << "   kolumna " << pozycja_x << endl;
+    //cout << "Ruch na pozycji wiersz " << pozycja_y << "   kolumna " << pozycja_x << endl;
     winner = g1->makeMove(pozycja_y, pozycja_x);
     refreshBoardView();
     if(winner != -1)
@@ -93,30 +80,40 @@ void MainWindow::obslugaKlikniecia(int pozycja_x, int pozycja_y)
         endGame(winner);
     }
 
+    if(g1->playerTurn == 2 && trybRozgrywki2 == "Computer" && trybRozgrywki1 != "Computer")
+    {
+        nextMoveAI();
+    }
+    if(g1->playerTurn == 1 && trybRozgrywki1 == "Computer"  && trybRozgrywki2 != "Computer")
+    {
+        nextMoveAI();
+    }
+
+
 
 }
 void MainWindow::endGame(int flaga)
 {
 
-        if(flaga == 1)
-        {
-            QMessageBox::StandardButton reply = QMessageBox::information(this, "Wynik gry", "Wygrywa gracz 1");
+    if(flaga == 1)
+    {
+        QMessageBox::StandardButton reply = QMessageBox::information(this, "Wynik gry", "Wygrywa gracz 1");
 
-        }
-        if(flaga == 2)
-        {
-            QMessageBox::StandardButton reply = QMessageBox::information(this, "Wynik gry", "Wygrywa gracz 2");
+    }
+    if(flaga == 2)
+    {
+        QMessageBox::StandardButton reply = QMessageBox::information(this, "Wynik gry", "Wygrywa gracz 2");
 
-        }
-        if(flaga == 0)
-        {
-            QMessageBox::StandardButton reply = QMessageBox::information(this, "Wynik gry", "Remis - plansza została zapełniona");
+    }
+    if(flaga == 0)
+    {
+        QMessageBox::StandardButton reply = QMessageBox::information(this, "Wynik gry", "Remis - plansza została zapełniona");
 
-        }
+    }
 
-        delete g1;
-        g1 = new GameEngine(n);
-        refreshBoardView();
+    delete g1;
+    g1 = new GameEngine(n);
+    refreshBoardView();
 
 }
 
@@ -158,18 +155,14 @@ void MainWindow::refreshBoardView()
         }
     }
 
-
-    //QPixmap player01 ("E:/Dropbox/InneProjekty/006_/Programy/GUI/Connect4/Graphic/002.jpg");
-    //QPixmap player02 ("E:/Dropbox/InneProjekty/006_/Programy/GUI/Connect4/Graphic/003.jpg");
-
     if(g1->playerTurn == 1)
-       {
-           ui->label_nextMove->setPixmap(player01.scaled(50, 50, Qt::IgnoreAspectRatio));
-       }
-       else if (g1->playerTurn == 2)
-       {
-           ui->label_nextMove->setPixmap(player02.scaled(50, 50, Qt::IgnoreAspectRatio));
-       }
+    {
+        ui->label_nextMove->setPixmap(player01.scaled(70, 70, Qt::IgnoreAspectRatio));
+    }
+    else if (g1->playerTurn == 2)
+    {
+        ui->label_nextMove->setPixmap(player02.scaled(70, 70, Qt::IgnoreAspectRatio));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -182,10 +175,136 @@ void MainWindow::on_pushButton_clicked()
 {
     AI* a1 = new AI(n, g1);
     int winner = -1;
-    winner = a1->makeBestMove(g1->b1->board,g1->playerTurn);
+    if(g1->playerTurn == 1)
+    {
+        winner = a1->makeBestMove(g1->b1->board,g1->playerTurn, heuristicType1, algorithm_type1);
+    }
+    else
+    {
+        winner = a1->makeBestMove(g1->b1->board,g1->playerTurn, heuristicType2, algorithm_type2);
+    }
     refreshBoardView();
     if(winner != -1)
     {
         endGame(winner);
     }
+}
+
+void MainWindow::on_pushButton_confirmChanges_clicked()
+{
+
+    QString QString_role_player1 = ui->comboBox_role_player1->currentText();
+    trybRozgrywki1 = QString_role_player1.toLocal8Bit().constData();
+
+    QString QString_role_player2 = ui->comboBox_role_player2->currentText();
+    trybRozgrywki2 = QString_role_player2.toLocal8Bit().constData();
+
+    QString QString_heuristic_player1 = ui->comboBox_heuristic_player1->currentText();
+    string heuristicTypePom1 = QString_heuristic_player1.toLocal8Bit().constData();
+    heuristicType1 = 0;
+    if(heuristicTypePom1 == "Board evaluation 1")
+    {
+        heuristicType1 = 1;
+    }
+    else if (heuristicTypePom1 == "Board evaluation 2")
+    {
+         heuristicType1 = 2;
+    }
+
+
+    QString QString_heuristic_player2 = ui->comboBox_heuristic_player2->currentText();
+    string heuristicTypePom2 = QString_heuristic_player2.toLocal8Bit().constData();
+    heuristicType2 = 0;
+    if(heuristicTypePom2 == "Board evaluation 1")
+    {
+        heuristicType2 = 1;
+    }
+    else if (heuristicTypePom2 == "Board evaluation 2")
+    {
+         heuristicType2 = 2;
+    }
+
+
+    QString QString_algorithm_typePom1 = ui->comboBox_algorithm_player1->currentText();
+    string algorithm_typePom1 = QString_algorithm_typePom1.toLocal8Bit().constData();
+
+    if(algorithm_typePom1 == "AlfaBeta")
+    {
+        algorithm_type1 = 1;
+    }
+    else if (algorithm_typePom1 == "MinMax")
+    {
+         algorithm_type1 =  2;
+    }
+
+
+    QString QString_algorithm_typePom2 = ui->comboBox_algorithm_player2->currentText();
+    string algorithm_typePom2 = QString_algorithm_typePom2.toLocal8Bit().constData();
+    if(algorithm_typePom2 == "AlfaBeta")
+    {
+        algorithm_type2 = 1;
+    }
+    else if (algorithm_typePom2 == "MinMax")
+    {
+         algorithm_type2 =  2;
+    }
+
+    if (trybRozgrywki1 == "Computer" && trybRozgrywki2 == "Computer")
+    {
+        AIvsAI();
+    }
+    if (trybRozgrywki1 == "Computer")
+    {
+        nextMoveAI();
+    }
+
+
+
+}
+
+void MainWindow::AIvsAI()
+{
+    int totalTimePlayer1 = 0;
+    int totalTimePlayer2 = 0;
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+
+    while(true)
+    {
+        int flaga = nextMoveAI();
+        qApp->processEvents();
+        if(flaga  == 1)
+        {
+            cout << "Zatrzymanie" << endl;
+            break;
+        }
+    }
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = finish - start;
+    cout << "Execution time[s]:		" << elapsed.count() << " s\n";
+}
+
+int MainWindow::nextMoveAI()
+{
+    AI* a1 = new AI(n, g1);
+    int winner = -1;
+    if(g1->playerTurn == 1)
+    {
+        winner = a1->makeBestMove(g1->b1->board,g1->playerTurn, heuristicType1, algorithm_type1);
+    }
+    else
+    {
+        winner = a1->makeBestMove(g1->b1->board,g1->playerTurn, heuristicType2, algorithm_type2);
+    }
+
+    refreshBoardView();
+    if(winner != -1)
+    {
+        endGame(winner);
+        return 1;
+    }
+    return 0;
+
 }

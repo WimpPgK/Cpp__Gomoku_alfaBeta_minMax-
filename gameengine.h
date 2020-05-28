@@ -5,17 +5,18 @@
 
 class GameEngine
 {
-    int n;
-
-
-
+    int n;  // wymiar planszy
 public:
-    GameEngine(int n);
-    int makeMove(int pozycja_x, int pozycja_y);
-    int checkWinner(char** board);
-    int playerTurn;
 
-    Board* b1;
+    GameEngine(int n);
+    // funkcja odpowiedzialna za wykonanie ruchu i sprawdzenie stanu planszy po tym ruchu
+    int makeMove(int pozycja_x, int pozycja_y);
+
+    // funkcja sprawdza czy ktos wygral
+    int checkWinner(char** board);
+
+    int playerTurn; // czyj jest aktualnie ruch
+    Board* b1;      // plansza
 private:
 
 };
